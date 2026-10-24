@@ -1,0 +1,24 @@
+title: 句号 · 个人博客
+description: 写代码，也写字。记录技术、阅读与生活里值得留下的东西。
+lang: zh-CN
+timezone: Asia/Shanghai
+
+url: "https://lumina686.github.io"
+baseurl: ""
+
+author:
+  name: 句号
+  email: 1yqh1013@gmail.com
+  github: lumina686
+
+github_username: lumina686
+email: 1yqh1013@gmail.com
+
+markdown: kramdown
+permalink: /posts/:title/
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - .gitignore

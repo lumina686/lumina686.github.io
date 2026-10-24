@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'zh-CN' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% assign meta_description = page.description | default: page.excerpt | default: site.description | strip_html | normalize_whitespace %}
+  <meta name="description" content="{{ meta_description }}">
+  <meta name="author" content="{{ site.author.name }}">
+  <meta name="theme-color" content="#f8f3e9">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
+  <meta property="og:title" content="{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}">
+  <meta property="og:description" content="{{ meta_description }}">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta property="og:site_name" content="{{ site.title }}">
+  <meta name="twitter:card" content="summary">
+  <title>{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}</title>
+  <link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="{{ '/' | relative_url }}"><span class="brand-mark">{{ site.title | split: '·' | first | strip }}</span><span class="brand-dot">。</span></a>
+      <nav aria-label="主导航">
+        <ul class="nav-links">
+          <li><a href="{{ '/' | relative_url }}#writing">文章</a></li>
+          <li><a href="{{ '/' | relative_url }}#projects">项目</a></li>
+          <li><a href="{{ '/about.html' | relative_url }}">关于我</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main">{{ content }}</main>
+  <footer class="site-footer"><div class="wrap footer-row"><span>© {{ 'now' | date: '%Y' }} {{ site.title | split: '·' | first | strip }}</span><span><a href="https://github.com/{{ site.github_username }}">GitHub</a> · <a href="mailto:{{ site.email }}">Email</a></span></div></footer>
+</body>
+</html>

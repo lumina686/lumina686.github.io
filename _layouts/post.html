@@ -1,0 +1,11 @@
+---
+layout: default
+---
+<article class="wrap post-page">
+  <p class="eyebrow">{{ page.date | date: '%Y.%m.%d' }}{% if page.tags %} · {{ page.tags | join: ' / ' }}{% endif %}</p>
+  <h1>{{ page.title }}</h1>
+  {% if page.excerpt %}<p class="post-excerpt">{{ page.excerpt }}</p>{% endif %}
+  <div class="rule"></div>
+  <div class="post-body">{{ content }}</div>
+  <p class="back-link"><a href="{{ '/' | relative_url }}#writing">← 返回文章列表</a></p>
+</article>
