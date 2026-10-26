@@ -2,37 +2,80 @@
 layout: default
 ---
 <section id="top" class="wrap hero" aria-labelledby="hero-title">
-  <div>
+  <div class="hero-panel glass reveal">
     <p class="eyebrow">Personal blog · {{ 'now' | date: '%Y' }}</p>
     <h1 id="hero-title">你好，<br>我是{{ site.title | split: '·' | first | strip }}。</h1>
     <p class="hero-copy">一个写代码的人，也在练习把想法写清楚。这里放着我的技术笔记、读过的书，和一些值得停一下的普通日子。</p>
     <div class="hero-actions">
-      <a class="button primary" href="#writing">读读我的文章</a>
-      <a class="button secondary" href="mailto:{{ site.email }}">给我发邮件</a>
+      <a class="btn btn--primary" href="#writing">读读我的文章<span class="arrow" aria-hidden="true">→</span></a>
+      <a class="btn" href="mailto:{{ site.email }}">给我发邮件</a>
     </div>
+    <p class="hero-note"><span class="pulse" aria-hidden="true"></span>最近更新 · {{ site.posts.first.date | date: '%Y.%m.%d' }}</p>
   </div>
-  <div class="hero-card" aria-label="句号的个人标识"><div class="avatar">句</div></div>
+  <div class="hero-art" role="img" aria-label="一组液态玻璃球，中间是句号的标识">
+    <span class="orb orb--a" aria-hidden="true"></span>
+    <span class="orb orb--b" aria-hidden="true"></span>
+    <div class="lens"><span class="lens__avatar">句</span><span class="lens__glint" aria-hidden="true"></span></div>
+    <span class="drop drop--a" aria-hidden="true"></span>
+    <span class="drop drop--b" aria-hidden="true"></span>
+  </div>
 </section>
 
 <section id="writing" class="wrap section" aria-labelledby="writing-title">
-  <div class="section-heading"><div><p class="eyebrow">Latest notes</p><h2 id="writing-title">最近写了什么</h2><div class="rule"></div></div><p>所有文章都是 <code>_posts</code> 里的 Markdown 文件，推送后由 GitHub Actions 自动发布。</p></div>
-  <div class="article-grid">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Latest notes</p>
+      <h2 id="writing-title">最近写了什么</h2>
+      <span class="rule" aria-hidden="true"></span>
+    </div>
+    <p class="section-note">所有文章都是 <code>_posts</code> 里的 Markdown 文件，推送后由 GitHub Actions 自动发布。</p>
+  </div>
+  <div class="card-grid">
     {% for post in site.posts limit: 6 %}
-    <article class="card">
-      <div class="card-meta">{{ post.date | date: '%Y.%m.%d' }}{% if post.tags %} · {{ post.tags | first }}{% endif %}</div>
+    <article class="card glass reveal" style="--d: {{ forloop.index0 | times: 60 }}ms">
+      <div class="card__meta">
+        <time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%Y.%m.%d' }}</time>
+        {% if post.tags %}<span class="tag">{{ post.tags | first }}</span>{% endif %}
+      </div>
       <h3>{{ post.title }}</h3>
-      <p>{{ post.excerpt | strip_html | truncate: 100 }}</p>
-      <a class="card-link" href="{{ post.url | relative_url }}">阅读文章 →</a>
+      <p>{{ post.excerpt | strip_html | truncate: 96 }}</p>
+      <span class="card__link">阅读文章<span class="arrow" aria-hidden="true">→</span></span>
+      <a class="card__hit" href="{{ post.url | relative_url }}" aria-label="阅读《{{ post.title }}》"></a>
     </article>
     {% endfor %}
   </div>
 </section>
 
 <section id="projects" class="wrap section" aria-labelledby="projects-title">
-  <div class="section-heading"><div><p class="eyebrow">Selected work</p><h2 id="projects-title">做过的小项目</h2><div class="rule"></div></div><p>有些是正经项目，有些只是为了让日子顺手一点。</p></div>
-  <div class="project-grid">
-    <article class="card"><div class="card-meta">PROJECT 01</div><h3>这个博客</h3><p>Jekyll + GitHub Pages，没有前端框架，也没有构建服务器。写作就是新建一个 Markdown 文件。</p><a class="card-link" href="https://github.com/{{ site.github_username }}/{{ site.github_username }}.github.io" target="_blank" rel="noopener">查看源码 →</a></article>
-    <article class="card"><div class="card-meta">PROJECT 02</div><h3>写作流水线</h3><p>从草稿到发布：Markdown 负责内容，Git 负责版本，Actions 负责构建。</p><a class="card-link" href="{{ '/posts/blog-setup/' | relative_url }}">读读搭建笔记 →</a></article>
-    <article class="card"><div class="card-meta">PROJECT 03</div><h3>阅读与摘记</h3><p>读得慢一点，把值得回看的句子和想法留下来。不追求数量，只在意有没有真的读进去。</p><a class="card-link" href="{{ '/about.html#reading' | relative_url }}">看看我在读什么 →</a></article>
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Selected work</p>
+      <h2 id="projects-title">做过的小项目</h2>
+      <span class="rule" aria-hidden="true"></span>
+    </div>
+    <p class="section-note">有些是正经项目，有些只是为了让日子顺手一点。</p>
+  </div>
+  <div class="card-grid card-grid--three">
+    <article class="card glass reveal">
+      <div class="card__meta">Project 01</div>
+      <h3>这个博客</h3>
+      <p>Jekyll + GitHub Pages，没有前端框架，也没有构建服务器。写作就是新建一个 Markdown 文件。</p>
+      <span class="card__link">查看源码<span class="arrow" aria-hidden="true">→</span></span>
+      <a class="card__hit" href="https://github.com/{{ site.github_username }}/{{ site.github_username }}.github.io" target="_blank" rel="noopener" aria-label="查看这个博客的源码"></a>
+    </article>
+    <article class="card glass reveal" style="--d: 70ms">
+      <div class="card__meta">Project 02</div>
+      <h3>写作流水线</h3>
+      <p>从草稿到发布：Markdown 负责内容，Git 负责版本，Actions 负责构建。</p>
+      <span class="card__link">读读搭建笔记<span class="arrow" aria-hidden="true">→</span></span>
+      <a class="card__hit" href="{{ '/posts/blog-setup/' | relative_url }}" aria-label="读读这个博客的搭建笔记"></a>
+    </article>
+    <article class="card glass reveal" style="--d: 140ms">
+      <div class="card__meta">Project 03</div>
+      <h3>阅读与摘记</h3>
+      <p>读得慢一点，把值得回看的句子和想法留下来。不追求数量，只在意有没有真的读进去。</p>
+      <span class="card__link">看看我在读什么<span class="arrow" aria-hidden="true">→</span></span>
+      <a class="card__hit" href="{{ '/about.html#now-title' | relative_url }}" aria-label="看看我最近在读什么"></a>
+    </article>
   </div>
 </section>

@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="{{ site.lang | default: 'zh-CN' }}">
+<html lang="{{ site.lang | default: 'zh-CN' }}" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% assign meta_description = page.description | default: page.excerpt | default: site.description | strip_html | normalize_whitespace %}
   <meta name="description" content="{{ meta_description }}">
   <meta name="author" content="{{ site.author.name }}">
-  <meta name="theme-color" content="#f8f3e9">
+  <meta name="theme-color" content="#050b10">
   <link rel="canonical" href="{{ page.url | absolute_url }}">
   <meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
   <meta property="og:title" content="{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}">
@@ -16,23 +16,55 @@
   <meta name="twitter:card" content="summary">
   <title>{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}</title>
   <link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}" type="image/svg+xml">
+  <script>
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('js');
+      var saved = null;
+      try { saved = window.localStorage.getItem('glass-theme'); } catch (error) { /* 隐私模式 */ }
+      root.setAttribute('data-theme', saved === 'light' || saved === 'dark' ? saved : 'dark');
+    })();
+  </script>
   <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+  <script src="{{ '/assets/liquid.js' | relative_url }}" defer></script>
 </head>
 <body>
+  <div class="field" aria-hidden="true"><canvas id="field-canvas"></canvas></div>
   <a class="skip-link" href="#main">跳到主要内容</a>
+  {% if page.layout == 'post' %}<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>{% endif %}
+
   <header class="site-header">
-    <div class="wrap nav">
-      <a class="brand" href="{{ '/' | relative_url }}"><span class="brand-mark">{{ site.title | split: '·' | first | strip }}</span><span class="brand-dot">。</span></a>
-      <nav aria-label="主导航">
-        <ul class="nav-links">
+    <div class="wrap">
+      <nav class="nav glass" aria-label="主导航">
+        <a class="brand" href="{{ '/' | relative_url }}">{{ site.title | split: '·' | first | strip }}<span class="brand__dot">。</span></a>
+        <ul class="nav__links">
           <li><a href="{{ '/' | relative_url }}#writing">文章</a></li>
           <li><a href="{{ '/' | relative_url }}#projects">项目</a></li>
-          <li><a href="{{ '/about.html' | relative_url }}">关于我</a></li>
+          <li><a href="{{ '/about.html' | relative_url }}">关于</a></li>
         </ul>
+        <button class="theme-toggle" type="button" aria-label="切换到深色主题" title="切换到深色主题">
+          <svg class="icon icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.1"></circle>
+            <path d="M12 2.4v2.1M12 19.5v2.1M2.4 12h2.1M19.5 12h2.1M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M18.7 5.3l-1.5 1.5M6.8 17.2l-1.5 1.5"></path>
+          </svg>
+          <svg class="icon icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20.2 14.4A8.4 8.4 0 0 1 9.6 3.8a8.4 8.4 0 1 0 10.6 10.6Z"></path>
+          </svg>
+        </button>
       </nav>
     </div>
   </header>
+
   <main id="main">{{ content }}</main>
-  <footer class="site-footer"><div class="wrap footer-row"><span>© {{ 'now' | date: '%Y' }} {{ site.title | split: '·' | first | strip }}</span><span><a href="https://github.com/{{ site.github_username }}">GitHub</a> · <a href="mailto:{{ site.email }}">Email</a></span></div></footer>
+
+  <footer class="site-footer">
+    <div class="wrap footer-row">
+      <p>© {{ 'now' | date: '%Y' }} {{ site.title | split: '·' | first | strip }} · 用 Markdown 写的</p>
+      <p class="footer-links">
+        <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener">GitHub</a>
+        <a href="mailto:{{ site.email }}">Email</a>
+      </p>
+    </div>
+  </footer>
 </body>
 </html>
