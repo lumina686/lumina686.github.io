@@ -1273,9 +1273,16 @@ code {
   text-indent: .6em;
 }
 
+.photo-hero__actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 38px;
+}
+
 .photo-hero__write {
   display: inline-block;
-  margin-top: 38px;
   padding: 10px 28px;
   border: 1px solid rgba(255, 255, 255, .75);
   border-radius: 999px;
