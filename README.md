@@ -30,6 +30,10 @@
 
 ## 写一篇新文章
 
+在博客首页点击「写点东西」，用 `lumina686` GitHub 账号登录，填写标题和正文，点击「Submit new issue」。文章会自动写入 `_posts/` 并触发站点发布；只有该账号创建的写作表单会发布为文章。GitHub 的 Issue 是写作表单，不需要手动创建文件或执行下面的 Git 命令。
+
+下面保留手动写 Markdown 的方式：
+
 在 `_posts/` 中新建 `YYYY-MM-DD-title.md`，开头写：
 
 ```yaml
