@@ -1229,3 +1229,99 @@ code {
   html { scrollbar-width: thin; scrollbar-color: rgba(160, 200, 210, .3) transparent; }
   :root[data-theme="light"] { scrollbar-color: rgba(30, 70, 90, .32) transparent; }
 }
+
+/* Homepage photographic cover */
+.photo-hero {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 680px;
+  min-height: 100svh;
+  overflow: hidden;
+  color: #fff;
+  background: #183c75 url('cover-blue-hour.jpg') center 53% / cover no-repeat;
+  isolation: isolate;
+}
+
+.photo-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(2, 18, 47, .33), rgba(2, 18, 47, .08) 45%, rgba(2, 18, 47, .12));
+}
+
+.photo-hero__content {
+  margin-top: -7vh;
+  text-align: center;
+  text-shadow: 0 3px 24px rgba(0, 18, 50, .35);
+}
+
+.photo-hero h1 {
+  margin: 0;
+  font-size: clamp(5rem, 11vw, 9rem);
+  font-weight: 400;
+  letter-spacing: .12em;
+  line-height: 1.2;
+}
+
+.photo-hero__content p {
+  margin: 18px 0 0;
+  font-family: var(--serif);
+  font-size: clamp(1.2rem, 2vw, 2rem);
+  letter-spacing: .6em;
+  text-indent: .6em;
+}
+
+.photo-hero__scroll {
+  position: absolute;
+  bottom: clamp(28px, 4vh, 48px);
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+}
+
+.photo-hero__scroll span {
+  width: 17px;
+  height: 17px;
+  transform: translateY(-4px) rotate(45deg);
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.home-page .site-header { inset: 20px 0 auto; }
+.home-page .site-header .wrap { max-width: none; }
+.home-page .site-header:not(.is-scrolled) .nav {
+  width: 100%;
+  padding-inline: 0;
+  color: #fff;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.home-page .site-header:not(.is-scrolled) .nav::before,
+.home-page .site-header:not(.is-scrolled) .nav::after { display: none; }
+.home-page .site-header:not(.is-scrolled) .brand__dot,
+.home-page .site-header:not(.is-scrolled) .nav__links a { color: #fff; }
+.home-page .site-header:not(.is-scrolled) .theme-toggle {
+  color: #fff;
+  border-color: rgba(255, 255, 255, .55);
+  background: rgba(0, 20, 50, .18);
+}
+.home-page .site-header.is-scrolled .nav { margin-inline: auto; }
+.home-page #writing { scroll-margin-top: 80px; }
+
+@media (max-width: 760px) {
+  .photo-hero { min-height: 580px; min-height: 100svh; background-position: 51% center; }
+  .photo-hero h1 { font-size: clamp(4rem, 17vw, 6rem); }
+  .photo-hero__content p { letter-spacing: .35em; text-indent: .35em; }
+  .home-page .site-header { inset: 12px 0 auto; }
+  .home-page .site-header:not(.is-scrolled) .nav { flex-wrap: wrap; gap: 4px 8px; }
+  .home-page .site-header:not(.is-scrolled) .nav__links { order: 3; width: 100%; justify-content: center; }
+  .home-page .site-header:not(.is-scrolled) .theme-toggle { margin-left: auto; }
+}

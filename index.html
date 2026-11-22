@@ -1,24 +1,13 @@
 ---
 layout: default
+home: true
 ---
-<section id="top" class="wrap hero" aria-labelledby="hero-title">
-  <div class="hero-panel glass reveal">
-    <p class="eyebrow">Personal blog · {{ 'now' | date: '%Y' }}</p>
-    <h1 id="hero-title">你好，<br>我是{{ site.title | split: '·' | first | strip }}。</h1>
-    <p class="hero-copy">一个写代码的人，也在练习把想法写清楚。这里放着我的技术笔记、读过的书，和一些值得停一下的普通日子。</p>
-    <div class="hero-actions">
-      <a class="btn btn--primary" href="#writing">读读我的文章<span class="arrow" aria-hidden="true">→</span></a>
-      <a class="btn" href="mailto:{{ site.email }}">给我发邮件</a>
-    </div>
-    <p class="hero-note"><span class="pulse" aria-hidden="true"></span>最近更新 · {{ site.posts.first.date | date: '%Y.%m.%d' }}</p>
+<section id="top" class="photo-hero" aria-labelledby="hero-title">
+  <div class="photo-hero__content">
+    <h1 id="hero-title">{{ site.title | split: '·' | first | strip }}</h1>
+    <p>个人博客</p>
   </div>
-  <div class="hero-art" role="img" aria-label="一组液态玻璃球，中间是句号的标识">
-    <span class="orb orb--a" aria-hidden="true"></span>
-    <span class="orb orb--b" aria-hidden="true"></span>
-    <div class="lens"><span class="lens__avatar">句</span><span class="lens__glint" aria-hidden="true"></span></div>
-    <span class="drop drop--a" aria-hidden="true"></span>
-    <span class="drop drop--b" aria-hidden="true"></span>
-  </div>
+  <a class="photo-hero__scroll" href="#writing" aria-label="向下浏览文章"><span aria-hidden="true"></span></a>
 </section>
 
 <section id="writing" class="wrap section" aria-labelledby="writing-title">
