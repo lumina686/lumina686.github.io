@@ -130,6 +130,22 @@
   title.addEventListener('input', saveDraft);
   body.addEventListener('input', saveDraft);
   photos.addEventListener('change', () => { showPhotos(); saveDraft(); });
+  document.getElementById('paste-photo').addEventListener('click', async () => {
+    try {
+      const items = await navigator.clipboard.read();
+      const images = [];
+      for (const item of items) {
+        const type = item.types.find(value => value.startsWith('image/'));
+        if (type) images.push(new File([await item.getType(type)], `粘贴照片-${Date.now()}.png`, { type }));
+      }
+      if (!images.length) { setStatus('剪贴板里没有图片，请先复制照片。'); return; }
+      const transfer = new DataTransfer();
+      Array.from(photos.files).concat(images).forEach(file => transfer.items.add(file));
+      photos.files = transfer.files;
+      showPhotos();
+      saveDraft();
+    } catch (_) { setStatus('无法读取剪贴板。请点一下照片说明框后按 Ctrl+V。'); }
+  });
   document.addEventListener('paste', event => {
     if (mode !== 'photo') return;
     const images = Array.from(event.clipboardData?.files || []).filter(file => file.type.startsWith('image/'));

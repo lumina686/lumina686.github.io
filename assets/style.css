@@ -1366,6 +1366,7 @@ code {
 }
 .editor textarea { min-height: 300px; resize: vertical; line-height: 1.8; }
 .editor input[type="file"] { color: var(--ink); max-width: 100%; }
+#paste-photo { justify-self: start; cursor: pointer; }
 .editor__hint { margin: 0; color: var(--muted); font-size: .85rem; }
 .editor__hint a { color: var(--accent); }
 .editor__preview { display: flex; flex-wrap: wrap; gap: 8px; }
