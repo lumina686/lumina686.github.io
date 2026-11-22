@@ -7,8 +7,8 @@ home: true
     <h1 id="hero-title">{{ site.title | split: '·' | first | strip }}</h1>
     <p>个人博客</p>
     <div class="photo-hero__actions">
-      <a class="photo-hero__write" href="https://github.com/{{ site.github_username }}/{{ site.github_username }}.github.io/issues/new?template=blog-post.yml">写点东西</a>
-      <a class="photo-hero__write" href="https://github.com/{{ site.github_username }}/{{ site.github_username }}.github.io/issues/new?template=photo-post.yml">上传照片</a>
+      <a class="photo-hero__write" href="{{ '/write.html' | relative_url }}?mode=post">写点东西</a>
+      <a class="photo-hero__write" href="{{ '/write.html' | relative_url }}?mode=photo">上传照片</a>
     </div>
   </div>
   <a class="photo-hero__scroll" href="#writing" aria-label="向下浏览文章"><span aria-hidden="true"></span></a>

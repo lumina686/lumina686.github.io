@@ -1348,3 +1348,29 @@ code {
   .home-page .site-header:not(.is-scrolled) .nav__links { order: 3; width: 100%; justify-content: center; }
   .home-page .site-header:not(.is-scrolled) .theme-toggle { margin-left: auto; }
 }
+
+/* Private writing page */
+.editor { max-width: 900px; padding-top: clamp(110px, 14vh, 155px); }
+.editor__panel { padding: clamp(24px, 4vw, 48px); }
+.editor h1 { margin: 10px 0 0; font-size: clamp(2.4rem, 5vw, 3.8rem); }
+.editor__intro { color: var(--muted); margin: 14px 0 26px; }
+.editor__modes { display: flex; gap: 10px; margin-bottom: 28px; }
+.editor__modes a { padding: 7px 18px; border: 1px solid var(--faint); border-radius: 999px; text-decoration: none; }
+.editor__modes a[aria-current="page"] { border-color: var(--accent); color: var(--accent); }
+.editor form { display: grid; gap: 10px; }
+.editor label { margin-top: 16px; font-weight: 600; }
+.editor input[type="text"], .editor input[type="password"], .editor textarea {
+  width: 100%; padding: 13px 15px; border: 1px solid var(--glass-line);
+  border-radius: 12px; background: var(--glass-fill-solid); color: var(--ink);
+  font: inherit; outline-offset: 3px;
+}
+.editor textarea { min-height: 300px; resize: vertical; line-height: 1.8; }
+.editor input[type="file"] { color: var(--ink); max-width: 100%; }
+.editor__hint { margin: 0; color: var(--muted); font-size: .85rem; }
+.editor__hint a { color: var(--accent); }
+.editor__preview { display: flex; flex-wrap: wrap; gap: 8px; }
+.editor__preview span { padding: 5px 10px; border: 1px solid var(--faint); border-radius: 999px; font-size: .8rem; }
+.editor__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+.editor__actions button { cursor: pointer; }
+.editor__actions button:disabled { opacity: .55; cursor: wait; }
+.editor__status { min-height: 1.7em; margin: 12px 0 0; color: var(--accent); font-size: .9rem; }
