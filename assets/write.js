@@ -3,7 +3,11 @@
 
   const owner = 'lumina686';
   const repo = 'lumina686.github.io';
-  const mode = new URLSearchParams(location.search).get('mode') === 'photo' ? 'photo' : 'post';
+  const params = new URLSearchParams(location.search);
+  const mode = params.get('mode') === 'photo' ? 'photo' : 'post';
+  const editPath = params.get('edit') || '';
+  const editing = /^_posts\/[a-zA-Z0-9_-]+\.md$/.test(editPath);
+  const draftKey = editing ? `edit:${editPath}` : mode;
   const form = document.getElementById('editor-form');
   const title = document.getElementById('post-title');
   const body = document.getElementById('post-body');
@@ -16,8 +20,11 @@
   let saving = false;
   let draftDirty = false;
   let previewUrls = [];
+  let editSha = '';
+  let originalFrontMatter = '';
 
-  document.getElementById('editor-title').textContent = mode === 'photo' ? '上传照片' : '写点东西';
+  document.getElementById('editor-title').textContent = editing ? '编辑已发表内容' : (mode === 'photo' ? '上传照片' : '写点东西');
+  if (editing) publishButton.textContent = '保存修改';
   document.getElementById('body-label').textContent = mode === 'photo' ? '照片说明（可选）' : '正文';
   document.getElementById('mode-' + mode).setAttribute('aria-current', 'page');
   try { token.value = sessionStorage.getItem('blog-publish-token') || ''; } catch (_) { /* private browsing */ }
@@ -33,7 +40,7 @@
   }
   function readDraft() {
     return new Promise((resolve, reject) => {
-      const request = database.transaction('drafts').objectStore('drafts').get(mode);
+      const request = database.transaction('drafts').objectStore('drafts').get(draftKey);
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
@@ -41,7 +48,7 @@
   function writeDraft(value) {
     return new Promise((resolve, reject) => {
       const transaction = database.transaction('drafts', 'readwrite');
-      transaction.objectStore('drafts').put(value, mode);
+      transaction.objectStore('drafts').put(value, draftKey);
       transaction.oncomplete = resolve;
       transaction.onerror = () => reject(transaction.error);
     });
@@ -49,7 +56,7 @@
   function deleteDraft() {
     return new Promise((resolve, reject) => {
       const transaction = database.transaction('drafts', 'readwrite');
-      transaction.objectStore('drafts').delete(mode);
+      transaction.objectStore('drafts').delete(draftKey);
       transaction.oncomplete = resolve;
       transaction.onerror = () => reject(transaction.error);
     });
@@ -113,6 +120,21 @@
 
   openDatabase().then(async db => {
     database = db;
+    if (editing) {
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${editPath}`);
+      if (!response.ok) throw new Error('无法读取已发表内容');
+      const item = await response.json();
+      editSha = item.sha;
+      const raw = new TextDecoder().decode(Uint8Array.from(atob(item.content.replace(/\s/g, '')), character => character.charCodeAt(0)));
+      const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
+      if (!match) throw new Error('文章格式不受支持');
+      originalFrontMatter = match[1];
+      const titleLine = originalFrontMatter.match(/^title:\s*(.*)$/m);
+      if (titleLine) {
+        try { title.value = JSON.parse(titleLine[1]); } catch (_) { title.value = titleLine[1].replace(/^['"]|['"]$/g, ''); }
+      }
+      body.value = raw.slice(match[0].length).trim();
+    }
     const draft = await readDraft();
     if (draft) {
       title.value = draft.title || '';
@@ -124,8 +146,8 @@
         showPhotos();
       }
       setStatus('已恢复上次保存在这台设备的草稿');
-    } else setStatus('草稿会自动保存在这台设备');
-  }).catch(() => setStatus('浏览器无法保存草稿，请检查隐私或存储设置。'));
+    } else setStatus(editing ? '已载入已发表内容，修改会先保存在本机' : '草稿会自动保存在这台设备');
+  }).catch(error => setStatus(error.message || '浏览器无法保存草稿，请检查隐私或存储设置。'));
 
   title.addEventListener('input', saveDraft);
   body.addEventListener('input', saveDraft);
@@ -173,7 +195,7 @@
     const writing = body.value.trim();
     const selected = Array.from(photos.files);
     const key = token.value.trim();
-    if (!heading || (mode === 'post' && !writing) || (mode === 'photo' && !selected.length)) {
+    if (!heading || (mode === 'post' && !writing) || (mode === 'photo' && !selected.length && !(editing && writing))) {
       setStatus('请填写标题，并写正文或选择照片。'); return;
     }
     if (!key) { setStatus('发布前请填写 GitHub 发布令牌。'); token.focus(); return; }
@@ -200,16 +222,15 @@
         imageLines.push(`![照片 ${index + 1}](/${path})`);
       }
       const date = chinaDate();
-      const excerpt = writing.replace(/\s+/g, ' ').slice(0, 110) || '一组照片。';
+      const excerpt = writing.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/<img[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 110) || '一组照片。';
       const content = mode === 'photo' ? [...imageLines, writing].filter(Boolean).join('\n\n') : [writing, ...imageLines].filter(Boolean).join('\n\n');
-      const article = [
-        '---', 'layout: post', `title: ${JSON.stringify(heading)}`, `date: ${date}`,
-        `excerpt: ${JSON.stringify(excerpt)}`, 'tags:', `  - ${mode === 'photo' ? '摄影' : '随笔'}`,
-        '---', '', content, ''
-      ].join('\n');
+      const frontMatter = editing
+        ? originalFrontMatter.replace(/^title:.*$/m, `title: ${JSON.stringify(heading)}`).replace(/^excerpt:.*$/m, `excerpt: ${JSON.stringify(excerpt)}`)
+        : ['layout: post', `title: ${JSON.stringify(heading)}`, `date: ${date}`, `excerpt: ${JSON.stringify(excerpt)}`, 'tags:', `  - ${mode === 'photo' ? '摄影' : '随笔'}`].join('\n');
+      const article = ['---', frontMatter, '---', '', content, ''].join('\n');
       setStatus('正在发布到博客…');
-      await api(`/repos/${owner}/${repo}/contents/_posts/${date}-${mode}-${stamp}.md`, key, {
-        method: 'PUT', body: JSON.stringify({ message: `Publish ${mode} post: ${heading}`, content: await toBase64(new Blob([article])) })
+      await api(`/repos/${owner}/${repo}/contents/${editing ? editPath : `_posts/${date}-${mode}-${stamp}.md`}`, key, {
+        method: 'PUT', body: JSON.stringify({ message: `${editing ? 'Edit' : 'Publish'} ${mode} post: ${heading}`, content: await toBase64(new Blob([article])), ...(editing ? { sha: editSha } : {}) })
       });
       while (saving) await new Promise(resolve => setTimeout(resolve, 30));
       if (database) await deleteDraft();
@@ -217,7 +238,7 @@
       body.value = '';
       photos.value = '';
       showPhotos();
-      setStatus('已提交发布，博客通常会在几分钟内更新。');
+      setStatus(editing ? '修改已提交，博客通常会在几分钟内更新。' : '已提交发布，博客通常会在几分钟内更新。');
     } catch (error) {
       setStatus('发布失败：' + error.message + '。草稿仍保存在这台设备。');
     } finally {

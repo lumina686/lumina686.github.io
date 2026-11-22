@@ -13,5 +13,5 @@ layout: default
     <div class="prose">{{ content }}</div>
   </div>
 
-  <p class="post-foot reveal"><a class="btn" href="{{ '/' | relative_url }}#writing">← 返回文章列表</a></p>
+  <p class="post-foot reveal"><a class="btn" href="{{ '/' | relative_url }}#writing">← 返回文章列表</a> <a class="btn" href="{{ '/write/' | relative_url }}?mode={% if page.tags contains '摄影' %}photo{% else %}post{% endif %}&amp;edit={{ page.path | url_encode }}">编辑这篇内容</a></p>
 </div>
