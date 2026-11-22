@@ -130,6 +130,17 @@
   title.addEventListener('input', saveDraft);
   body.addEventListener('input', saveDraft);
   photos.addEventListener('change', () => { showPhotos(); saveDraft(); });
+  document.addEventListener('paste', event => {
+    if (mode !== 'photo') return;
+    const images = Array.from(event.clipboardData?.files || []).filter(file => file.type.startsWith('image/'));
+    if (!images.length) return;
+    event.preventDefault();
+    const transfer = new DataTransfer();
+    Array.from(photos.files).concat(images).forEach(file => transfer.items.add(file));
+    photos.files = transfer.files;
+    showPhotos();
+    saveDraft();
+  });
   document.getElementById('clear-button').addEventListener('click', async () => {
     if (!confirm('删除这台设备上当前类型的草稿？')) return;
     if (database) await deleteDraft();
