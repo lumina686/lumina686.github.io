@@ -15,6 +15,7 @@
   let database;
   let saving = false;
   let draftDirty = false;
+  let previewUrls = [];
 
   document.getElementById('editor-title').textContent = mode === 'photo' ? '上传照片' : '写点东西';
   document.getElementById('body-label').textContent = mode === 'photo' ? '照片说明（可选）' : '正文';
@@ -54,10 +55,15 @@
     });
   }
   function showPhotos() {
+    previewUrls.forEach(url => URL.revokeObjectURL(url));
+    previewUrls = [];
     preview.replaceChildren();
     for (const file of photos.files) {
-      const item = document.createElement('span');
-      item.textContent = file.name;
+      const item = document.createElement('img');
+      const url = URL.createObjectURL(file);
+      previewUrls.push(url);
+      item.src = url;
+      item.alt = '待上传照片';
       preview.appendChild(item);
     }
   }
@@ -164,7 +170,7 @@
         await api(`/repos/${owner}/${repo}/contents/${path}`, key, {
           method: 'PUT', body: JSON.stringify({ message: `Add blog photo ${index + 1}`, content: await toBase64(file) })
         });
-        imageLines.push(`![${file.name.replace(/[\[\]]/g, '')}](/${path})`);
+        imageLines.push(`![照片 ${index + 1}](/${path})`);
       }
       const date = chinaDate();
       const excerpt = writing.replace(/\s+/g, ' ').slice(0, 110) || '一组照片。';

@@ -33,7 +33,7 @@ home: true
       <h3>{{ post.title }}</h3>
       <p>{{ post.excerpt | strip_html | truncate: 96 }}</p>
       <span class="card__link">阅读文章<span class="arrow" aria-hidden="true">→</span></span>
-      <a class="card__hit" href="{{ post.url | relative_url }}" aria-label="阅读《{{ post.title }}》"></a>
+      <a class="card__hit" href="{{ post.url | relative_url }}?v={{ site.time | date: '%s' }}" aria-label="阅读《{{ post.title }}》"></a>
     </article>
     {% endfor %}
   </div>
