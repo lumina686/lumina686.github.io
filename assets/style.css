@@ -1371,6 +1371,8 @@ code {
 .editor__hint a { color: var(--accent); }
 .editor__preview { display: flex; flex-wrap: wrap; gap: 8px; }
 .editor__preview img { width: 110px; height: 110px; object-fit: cover; border: 1px solid var(--faint); border-radius: 12px; }
+.editor__preview div { display: grid; gap: 4px; }
+.editor__preview button { border: 0; background: transparent; color: var(--accent); cursor: pointer; }
 .editor__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
 .editor__actions button { cursor: pointer; }
 .editor__actions button:disabled { opacity: .55; cursor: wait; }

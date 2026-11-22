@@ -22,6 +22,7 @@
   let previewUrls = [];
   let editSha = '';
   let originalFrontMatter = '';
+  let existingImages = [];
 
   document.getElementById('editor-title').textContent = editing ? '编辑已发表内容' : (mode === 'photo' ? '上传照片' : '写点东西');
   if (editing) publishButton.textContent = '保存修改';
@@ -65,6 +66,22 @@
     previewUrls.forEach(url => URL.revokeObjectURL(url));
     previewUrls = [];
     preview.replaceChildren();
+    existingImages.forEach((source, index) => {
+      const item = document.createElement('div');
+      const image = document.createElement('img');
+      image.src = source;
+      image.alt = `已发表照片 ${index + 1}`;
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.textContent = '移除这张';
+      remove.addEventListener('click', () => {
+        existingImages.splice(index, 1);
+        showPhotos();
+        saveDraft();
+      });
+      item.append(image, remove);
+      preview.appendChild(item);
+    });
     for (const file of photos.files) {
       const item = document.createElement('img');
       const url = URL.createObjectURL(file);
@@ -82,7 +99,7 @@
     try {
       while (draftDirty) {
         draftDirty = false;
-        await writeDraft({ title: title.value, body: body.value, photos: Array.from(photos.files), savedAt: Date.now() });
+        await writeDraft({ title: title.value, body: body.value, photos: Array.from(photos.files), existingImages, savedAt: Date.now() });
       }
       setStatus('草稿已自动保存到这台设备');
     } catch (_) {
@@ -134,17 +151,23 @@
         try { title.value = JSON.parse(titleLine[1]); } catch (_) { title.value = titleLine[1].replace(/^['"]|['"]$/g, ''); }
       }
       body.value = raw.slice(match[0].length).trim();
+      if (mode === 'photo') {
+        existingImages = [...body.value.matchAll(/!\[[^\]]*\]\(([^)]+)\)/g)].map(item => item[1]);
+        body.value = body.value.replace(/!\[[^\]]*\]\([^)]+\)/g, '').trim();
+        showPhotos();
+      }
     }
     const draft = await readDraft();
     if (draft) {
       title.value = draft.title || '';
       body.value = draft.body || '';
+      existingImages = draft.existingImages || existingImages;
       if (draft.photos && draft.photos.length) {
         const transfer = new DataTransfer();
         draft.photos.forEach(file => transfer.items.add(file));
         photos.files = transfer.files;
-        showPhotos();
       }
+      showPhotos();
       setStatus('已恢复上次保存在这台设备的草稿');
     } else setStatus(editing ? '已载入已发表内容，修改会先保存在本机' : '草稿会自动保存在这台设备');
   }).catch(error => setStatus(error.message || '浏览器无法保存草稿，请检查隐私或存储设置。'));
@@ -185,6 +208,7 @@
     title.value = '';
     body.value = '';
     photos.value = '';
+    existingImages = [];
     showPhotos();
     setStatus('本机草稿已删除');
   });
@@ -195,7 +219,7 @@
     const writing = body.value.trim();
     const selected = Array.from(photos.files);
     const key = token.value.trim();
-    if (!heading || (mode === 'post' && !writing) || (mode === 'photo' && !selected.length && !(editing && writing))) {
+    if (!heading || (mode === 'post' && !writing) || (mode === 'photo' && !selected.length && !existingImages.length)) {
       setStatus('请填写标题，并写正文或选择照片。'); return;
     }
     if (!key) { setStatus('发布前请填写 GitHub 发布令牌。'); token.focus(); return; }
@@ -223,7 +247,7 @@
       }
       const date = chinaDate();
       const excerpt = writing.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/<img[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 110) || '一组照片。';
-      const content = mode === 'photo' ? [...imageLines, writing].filter(Boolean).join('\n\n') : [writing, ...imageLines].filter(Boolean).join('\n\n');
+      const content = mode === 'photo' ? [...existingImages.map((source, index) => `![照片 ${index + 1}](${source})`), ...imageLines, writing].filter(Boolean).join('\n\n') : [writing, ...imageLines].filter(Boolean).join('\n\n');
       const frontMatter = editing
         ? originalFrontMatter.replace(/^title:.*$/m, `title: ${JSON.stringify(heading)}`).replace(/^excerpt:.*$/m, `excerpt: ${JSON.stringify(excerpt)}`)
         : ['layout: post', `title: ${JSON.stringify(heading)}`, `date: ${date}`, `excerpt: ${JSON.stringify(excerpt)}`, 'tags:', `  - ${mode === 'photo' ? '摄影' : '随笔'}`].join('\n');
@@ -237,6 +261,7 @@
       title.value = '';
       body.value = '';
       photos.value = '';
+      existingImages = [];
       showPhotos();
       setStatus(editing ? '修改已提交，博客通常会在几分钟内更新。' : '已提交发布，博客通常会在几分钟内更新。');
     } catch (error) {
