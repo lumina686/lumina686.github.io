@@ -3,6 +3,12 @@ name: Publish blog post
 on:
   issues:
     types: [opened]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: Issue number to publish
+        required: true
+        type: number
 
 permissions:
   contents: write
@@ -11,19 +17,24 @@ permissions:
 
 jobs:
   publish:
-    if: github.event.issue.user.login == 'lumina686' && contains(github.event.issue.labels.*.name, 'blog-post')
+    if: github.event_name == 'workflow_dispatch' || (github.event.issue.user.login == 'lumina686' && !contains(github.event.issue.labels.*.name, 'photo-post') && !contains(github.event.issue.body, '### 照片'))
     runs-on: ubuntu-latest
     steps:
       - name: Create article and deploy
         uses: actions/github-script@v7
+        env:
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
         with:
           script: |
-            const issue = context.payload.issue;
+            const issue = context.payload.issue || (await github.rest.issues.get({
+              ...context.repo, issue_number: Number(process.env.ISSUE_NUMBER)
+            })).data;
+            if (issue.user.login !== 'lumina686') throw new Error('只有站长可以发布文章。');
+            if (issue.pull_request) throw new Error('只能发布文章记录。');
             const marker = '### 正文';
-            const body = issue.body || '';
+            const body = (issue.body || '').trim();
             const start = body.indexOf(marker);
-            if (start < 0) throw new Error('缺少正文，请使用“写点东西”表单。');
-            const content = body.slice(start + marker.length).trim();
+            const content = (start < 0 ? body : body.slice(start + marker.length)).trim();
             if (!content || content === '_No response_') throw new Error('正文不能为空。');
 
             const parts = new Intl.DateTimeFormat('en-US', {
