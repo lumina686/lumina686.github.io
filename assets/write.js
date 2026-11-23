@@ -28,7 +28,6 @@
   if (editing) publishButton.textContent = '保存修改';
   document.getElementById('body-label').textContent = mode === 'photo' ? '照片说明（可选）' : '正文';
   document.getElementById('mode-' + mode).setAttribute('aria-current', 'page');
-  try { token.value = sessionStorage.getItem('blog-publish-token') || ''; } catch (_) { /* private browsing */ }
 
   function setStatus(message) { status.textContent = message; }
   function openDatabase() {
@@ -233,7 +232,6 @@
     try {
       const user = await api('/user', key, { method: 'GET' });
       if (user.login !== owner) throw new Error('只有 lumina686 账号可以发布。');
-      try { sessionStorage.setItem('blog-publish-token', key); } catch (_) { /* private browsing */ }
       const stamp = Date.now() + '-' + crypto.randomUUID().slice(0, 8);
       const imageLines = [];
       for (const [index, file] of selected.entries()) {

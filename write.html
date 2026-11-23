@@ -22,8 +22,14 @@ title: 写作
       <p class="editor__hint">可直接按 Ctrl+V 粘贴图片，也可选多张照片；每张不超过 5 MB。照片会随草稿保存在这台设备。</p>
       <div id="photo-preview" class="editor__preview" aria-live="polite"></div>
       <label for="github-token">GitHub 发布令牌</label>
-      <input id="github-token" name="token" type="password" autocomplete="off" placeholder="发布时填写，只在当前浏览器会话中使用">
+      <input id="github-token" name="token" type="password" autocomplete="off" placeholder="填写 GitHub 发布令牌" aria-describedby="token-storage-hint token-storage-status">
       <p class="editor__hint">首次使用请在 GitHub 创建仅授权此博客仓库、Contents 读写权限的细粒度令牌。<a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">创建令牌</a></p>
+      <div class="editor__token-options">
+        <label for="remember-token"><input id="remember-token" type="checkbox"> 在此设备记住令牌</label>
+        <button id="forget-token" class="btn" type="button">清除令牌</button>
+      </div>
+      <p id="token-storage-hint" class="editor__hint">仅在自己的设备上勾选。令牌会保存在当前浏览器，关闭后重新打开可自动填入；取消勾选后仅在当前会话保留。</p>
+      <p id="token-storage-status" class="editor__hint" role="status" aria-live="polite"></p>
       <div class="editor__actions">
         <button id="publish-button" class="btn btn--primary" type="submit">发布到博客</button>
         <button id="clear-button" class="btn" type="button">删除本机草稿</button>
@@ -32,4 +38,5 @@ title: 写作
     </form>
   </div>
 </section>
+<script src="{{ '/assets/token-storage.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
 <script src="{{ '/assets/write.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>

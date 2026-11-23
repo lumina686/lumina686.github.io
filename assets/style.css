@@ -1377,3 +1377,8 @@ code {
 .editor__actions button { cursor: pointer; }
 .editor__actions button:disabled { opacity: .55; cursor: wait; }
 .editor__status { min-height: 1.7em; margin: 12px 0 0; color: var(--accent); font-size: .9rem; }
+
+.editor__token-options { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.editor__token-options label { display: flex; align-items: center; gap: 10px; margin: 0; cursor: pointer; }
+.editor__token-options input { width: 18px; height: 18px; accent-color: var(--accent); flex-shrink: 0; }
+.editor__token-options button { cursor: pointer; }
